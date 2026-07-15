@@ -1,0 +1,15 @@
+{
+  "name": "rocloud-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "ROCloud marketing site + legal pages (rocloud.app). Static — no framework, no runtime dependencies.",
+  "scripts": {
+    "build": "node build.mjs",
+    "build:prod": "node build.mjs --strict",
+    "start": "node build.mjs && npx --yes serve dist -l 4300"
+  },
+  "devDependencies": {
+    "marked": "^15.0.7"
+  }
+}

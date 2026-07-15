@@ -1,0 +1,76 @@
+# rocloud-site
+
+The public marketing site and legal pages for **ROCloud**, served at **https://rocloud.app**.
+
+Plain static HTML/CSS/JS — no framework, no runtime dependencies. The only build-time dependency is
+`marked`, used to render the legal pages from Markdown.
+
+## Why this exists
+
+Razorpay (and any payment gateway) requires the merchant's policies to be reachable at **public
+URLs**, with no login. The portals can't serve that purpose: `app.rocloud.app` is behind a sign-in
+screen, and the tenant subdomains (`*.rocloud.app`) would duplicate the same legal text across every
+customer's hostname. So the policies live here, once, on the apex domain.
+
+## The legal pages are generated — don't edit them by hand
+
+`docs/legal/*.md` is the **single source of truth** for ROCloud's legal text. `build.mjs` renders
+those drafts into `dist/legal/*.html`. Editing the generated HTML directly means the next build
+silently overwrites you, and the published text drifts from the drafts under review.
+
+| Source | Published at |
+|---|---|
+| `docs/legal/terms-and-conditions.md` | `/legal/terms` |
+| `docs/legal/privacy-policy.md` | `/legal/privacy` |
+| `docs/legal/refund-policy.md` | `/legal/refunds` |
+| `docs/legal/cancellation-policy.md` | `/legal/cancellation` |
+| `docs/legal/shipping-delivery-policy.md` | `/legal/delivery` |
+| `docs/legal/contact.md` | `/legal/contact` |
+
+## Before you publish: fill in `site.config.mjs`
+
+The Markdown drafts carry `[TOKEN]` placeholders (`[LEGAL ENTITY NAME]`, `[BUSINESS ADDRESS]`,
+`[SUPPORT EMAIL]`, …). **`site.config.mjs` is the one place you fill them in** — the build
+substitutes them into every page.
+
+Any token left empty stays visible in the output, and `npm run build:prod` **exits 1 rather than
+publish it**. A Razorpay reviewer must never see `[BUSINESS ADDRESS]`.
+
+## Commands
+
+```bash
+npm install
+npm run build        # build to dist/ — warns about unfilled placeholders
+npm run build:prod   # build, but FAIL if any placeholder is unfilled — use before deploying
+npm start            # build and serve at http://localhost:4300
+```
+
+## Pricing is fetched live — never hardcode it
+
+The pricing section renders from `GET https://api.rocloud.app/api/plans` (the `[AllowAnonymous]`
+endpoint the sign-up wizard uses), so prices and limits here can never drift from the `plans` table.
+`assets/site.js` does this.
+
+The static cards in `templates/index.html` are the no-JS / API-down fallback. They contain the one
+hand-written price on the whole site — a **"from ₹999/month"** floor. If the Basic plan's price
+changes, update that line.
+
+## Deploying
+
+1. `npm run build:prod` (fails if placeholders remain).
+2. Publish the contents of `dist/` to the IIS site for `rocloud.app`. `web.config` ships with it and
+   provides the extensionless `/legal/*` URLs, the `www` → apex redirect, and the security headers.
+3. Verify every URL returns **200 while signed out**, in a private window:
+
+   ```
+   /  /legal/terms  /legal/privacy  /legal/refunds
+   /legal/cancellation  /legal/delivery  /legal/contact
+   ```
+
+4. Paste those URLs into the Razorpay dashboard.
+
+## Brand
+
+`assets/site.css` mirrors the tokens in `rocloud-owner-portal/tailwind.config.js` (navy `#0C447C`,
+teal `#1D9E75`, shell `#F1EFE8`, Plus Jakarta Sans + Inter). If a brand colour changes there, change
+it here too.
