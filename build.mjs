@@ -48,11 +48,44 @@ const TOKENS = {
   '[API URL]': cfg.apiUrl,
 };
 
-const substitute = (text) =>
-  Object.entries(TOKENS).reduce(
+/**
+ * Tokens that are legitimately allowed to be empty. In the Markdown their sentence is wrapped in
+ * outer square brackets, e.g.
+ *
+ *   [Our GST registration number, where applicable, is **[GST NUMBER]**.]
+ *
+ * Filled in  → the brackets are dropped and the value substituted.
+ * Left empty → the whole sentence is removed, and the build does NOT fail.
+ *
+ * This is how a business that isn't GST-registered publishes Terms with no GST claim in them.
+ */
+const OPTIONAL = ['[GST NUMBER]'];
+
+const substitute = (text) => {
+  let out = text;
+
+  for (const token of OPTIONAL) {
+    const value = TOKENS[token];
+    // The optional sentence: an outer [...] that contains this token.
+    const sentence = new RegExp(`\\s*\\[[^\\[\\]]*${escapeRegex(token)}[^\\[\\]]*\\]`, 'g');
+
+    if (value) {
+      // Keep the sentence, but unwrap its outer brackets so they don't show on the page.
+      out = out.replace(sentence, (match) => ' ' + match.trim().slice(1, -1));
+    } else {
+      out = out.replace(sentence, '');
+    }
+  }
+
+  return Object.entries(TOKENS).reduce(
     (acc, [token, value]) => (value ? acc.replaceAll(token, value) : acc),
-    text,
+    out,
   );
+};
+
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 /** Anything still shaped like [SOME TOKEN] after substitution is an unfilled business detail. */
 const findPlaceholders = (text) => [...new Set(text.match(/\[[A-Z][A-Z0-9 &_/-]{2,}\]/g) ?? [])];
