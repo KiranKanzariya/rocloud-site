@@ -1,7 +1,7 @@
 /**
  * Builds the ROCloud marketing site into dist/.
  *
- * The six legal pages are RENDERED FROM ../docs/legal/*.md — that Markdown is the single source of
+ * The six legal pages are RENDERED FROM docs/legal/*.md — that Markdown is the single source of
  * truth for our legal text. Nothing here restates it, so the published pages can never drift from
  * the drafts under review.
  *
@@ -15,7 +15,9 @@ import { marked } from 'marked';
 import cfg from './site.config.mjs';
 
 const root = dirname(fileURLToPath(import.meta.url));
-const LEGAL_SRC = join(root, '..', 'docs', 'legal');
+// Inside this repo on purpose: the host (Netlify) only checks out rocloud-site, so a path outside
+// it can never be built remotely. Keeping the Markdown here is what lets the site auto-deploy.
+const LEGAL_SRC = join(root, 'docs', 'legal');
 const DIST = join(root, 'dist');
 const STRICT = process.argv.includes('--strict');
 
