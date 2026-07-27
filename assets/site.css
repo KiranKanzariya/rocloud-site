@@ -166,6 +166,26 @@ section { padding-block: 88px; }
 }
 .header-nav > a:not(.btn):hover { color: var(--navy); background: var(--foam); text-decoration: none; }
 
+/* Mobile menu toggle — hidden on desktop, revealed by the ≤840px rule below. */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--ink-light);
+  border-radius: var(--r-md);
+  color: var(--navy);
+  cursor: pointer;
+}
+.nav-toggle:hover { background: var(--foam); }
+.nav-toggle svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; }
+.nav-toggle .icon-close { display: none; }
+.nav-toggle[aria-expanded='true'] .icon-open { display: none; }
+.nav-toggle[aria-expanded='true'] .icon-close { display: block; }
+
 /* ── Buttons ───────────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
@@ -331,6 +351,26 @@ section { padding-block: 88px; }
   color: var(--midnight);
 }
 .plan-price .per { font-size: 14px; color: var(--ink-mid); }
+
+/* Annual option, rendered under the monthly figure only when it actually beats monthly.
+   The negative top margin eats .plan-price's 20px bottom margin, so the card keeps its
+   original spacing on any plan where this line is absent. */
+.plan-yearly {
+  margin: -14px 0 20px;
+  font-size: 14px;
+  color: var(--ink-mid);
+}
+.plan-save {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--teal-light);
+  color: #085041;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
 
 .plan ul {
   list-style: none;
@@ -551,10 +591,56 @@ section { padding-block: 88px; }
   .legal-nav a { background: var(--shell); }
 }
 
+/*
+  840px, not 640px. The full bar (logo + 3 links + two nowrap buttons) needs ~594px of the
+  593px available at 641px, so it overflowed for the whole 641–840px band. Below this the
+  nav collapses into a disclosure panel instead of the links simply vanishing — at ≤640px
+  they used to be `display: none` with no other way to reach Features/Pricing/FAQ.
+*/
+@media (max-width: 840px) {
+  .nav-toggle { display: inline-flex; }
+
+  .header-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 12px 24px 18px;
+    background: var(--white);
+    border-bottom: 1px solid var(--ink-light);
+    box-shadow: var(--shadow);
+  }
+  .header-nav.is-open { display: flex; }
+  .header-nav > a:not(.btn) { padding: 12px 14px; }
+  .header-nav .btn { width: 100%; }
+  .header-nav .btn-ghost { margin-top: 4px; }
+
+  .header-inner { position: relative; }
+}
+
 @media (max-width: 640px) {
-  .header-nav > a:not(.btn) { display: none; }
   .hero { padding-block: 64px 56px; }
   .section-head h2 { font-size: 28px; }
+  .cta h2 { font-size: 26px; }   /* was left at 32px while section heads dropped to 28px */
   .footer-grid { grid-template-columns: 1fr; }
   .prose > h1 { font-size: 28px; }
 }
+
+/*
+  Below ~320px a `minmax(280px, 1fr)` track cannot shrink past its minimum, so the feature
+  and pricing grids pushed the page into horizontal scroll on a 280px device (the Galaxy
+  Fold cover screen). Drop to a single fluid column there.
+*/
+@media (max-width: 360px) {
+  .grid-3, .plans { grid-template-columns: 1fr; }
+  .wrap { padding-inline: 16px; }
+  .feature, .plan { padding: 20px; }
+}
+
+/* Long-form legal tables scroll rather than forcing the page wide. */
+.prose .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.prose .table-wrap > table { margin-bottom: 0; }

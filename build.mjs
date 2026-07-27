@@ -92,6 +92,51 @@ function escapeRegex(value) {
 /** Anything still shaped like [SOME TOKEN] after substitution is an unfilled business detail. */
 const findPlaceholders = (text) => [...new Set(text.match(/\[[A-Z][A-Z0-9 &_/-]{2,}\]/g) ?? [])];
 
+/**
+ * The no-JS / API-down fallback in index.html states a "Plans from ₹N/month" floor by hand — the
+ * only price written anywhere on this site. It silently drifted once (read ₹999 while the Basic
+ * plan was ₹1099), which is a price we do not offer being shown to anyone whose browser blocks
+ * the script.
+ *
+ * So: fetch the live catalogue and compare. A network failure is NOT an error (the site must build
+ * offline and in CI without the API), but a reachable API that disagrees is — under --strict that
+ * fails the build, exactly like an unfilled placeholder.
+ *
+ * Returns null when the check could not run, otherwise { stated, actual, ok }.
+ */
+async function checkFallbackPrice(html) {
+  const stated = html.match(/Plans from ₹([\d,]+)\/month/)?.[1];
+  if (!stated) return null;                       // fallback markup changed shape — nothing to check
+
+  // An explicit controller rather than AbortSignal.timeout(): that keeps a live timer which would
+  // hold the event loop open for its full duration after the request has already finished.
+  const abort = new AbortController();
+  const timer = setTimeout(() => abort.abort(), 8000);
+  let plans;
+  try {
+    const res = await fetch(`${cfg.apiUrl}/plans`, {
+      headers: { Accept: 'application/json', Connection: 'close' },
+      signal: abort.signal,
+    });
+    if (!res.ok) return null;
+    plans = (await res.json())?.data;
+  } catch {
+    return null;                                  // offline / API down — skip, don't fail the build
+  } finally {
+    clearTimeout(timer);
+  }
+  if (!Array.isArray(plans) || plans.length === 0) return null;
+
+  const floor = Math.min(...plans.map((p) => Number(p.monthlyPrice)).filter(Number.isFinite));
+  if (!Number.isFinite(floor)) return null;
+
+  return {
+    stated,
+    actual: floor.toLocaleString('en-IN'),
+    ok: Number(stated.replace(/,/g, '')) === floor,
+  };
+}
+
 /** Cross-links inside the Markdown ("refund-policy.md") → the published clean URLs ("/legal/refunds"). */
 const relinkMarkdown = (md) =>
   PAGES.reduce((acc, p) => acc.replaceAll(`(${p.md})`, `(/legal/${p.slug})`), md);
@@ -163,7 +208,11 @@ const legalShell = ({ title, slug, body }) => `<!doctype html>
   <header class="header">
     <div class="wrap header-inner">
       <a class="logo" href="/">${LOGO_SVG}<span class="wordmark"><b>RO</b><i>Cloud</i></span></a>
-      <nav class="header-nav" aria-label="Main">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+        <svg class="icon-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <nav class="header-nav" id="site-nav" aria-label="Main">
         <a href="/#features">Features</a>
         <a href="/#pricing">Pricing</a>
         <a href="/legal/contact">Contact</a>
@@ -209,7 +258,12 @@ async function build() {
     const raw = await readFile(join(LEGAL_SRC, page.md), 'utf8');
     // Drop the maintainer-only HTML comment at the top of each draft, then rewrite cross-links.
     const md = relinkMarkdown(raw.replace(/<!--[\s\S]*?-->/g, '').trim());
-    const html = substitute(legalShell({ ...page, body: marked.parse(md) }));
+    // Wrap tables so a wide one scrolls inside the column instead of widening the page.
+    const body = String(marked.parse(md)).replace(
+      /<table>[\s\S]*?<\/table>/g,
+      (t) => `<div class="table-wrap">${t}</div>`,
+    );
+    const html = substitute(legalShell({ ...page, body }));
 
     await writeFile(join(DIST, 'legal', `${page.slug}.html`), html);
     written.push([`legal/${page.slug}.html`, html]);
@@ -219,13 +273,35 @@ async function build() {
   const unfilled = [...new Set(written.flatMap(([, html]) => findPlaceholders(html)))];
   for (const [name] of written) console.log(`  ✓ dist/${name}`);
 
+  // 4. The hand-written price floor must match the live plan catalogue.
+  const price = await checkFallbackPrice(index);
+  if (price === null) {
+    console.log('  · price check skipped (API unreachable) — verify the fallback floor by hand');
+  } else if (price.ok) {
+    console.log(`  ✓ fallback price ₹${price.stated} matches the live catalogue`);
+  }
+
   if (unfilled.length) {
     const msg = `\n  ${unfilled.length} unfilled placeholder(s): ${unfilled.join(', ')}\n  → fill them in rocloud-site/site.config.mjs`;
     if (STRICT) {
       console.error(`\n✖ Refusing to publish.${msg}\n`);
-      process.exit(1);
+      // exitCode rather than exit(): the price check above opens a socket, and calling
+      // process.exit() while undici is still closing it trips a libuv assertion on Windows.
+      // Setting the code and returning lets Node unwind cleanly and still exits non-zero.
+      process.exitCode = 1;
+      return;
     }
     console.warn(`\n⚠ Built for PREVIEW ONLY — do not deploy.${msg}\n`);
+  } else if (price && !price.ok) {
+    const msg =
+      `\n  The fallback says "Plans from ₹${price.stated}/month" but the cheapest live plan is ₹${price.actual}.` +
+      `\n  → fix the amount in rocloud-site/templates/index.html (search "Plans from")`;
+    if (STRICT) {
+      console.error(`\n✖ Refusing to publish — the site would advertise a price you don't offer.${msg}\n`);
+      process.exitCode = 1;
+      return;
+    }
+    console.warn(`\n⚠ Built for PREVIEW ONLY — stale price.${msg}\n`);
   } else {
     console.log('\n✓ No placeholders left — safe to deploy.\n');
   }

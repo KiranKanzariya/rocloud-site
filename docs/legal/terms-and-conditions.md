@@ -22,7 +22,9 @@ represent that you are authorised to bind that business.
 
 ROCloud is a cloud-based, software-as-a-service ("**SaaS**") platform that helps reverse-osmosis
 (RO) water-delivery businesses manage customers, orders, deliveries, inventory, invoicing,
-payments, annual maintenance contracts (AMC), and reporting. ROCloud provides **software only**.
+payments, and reporting. Features are provided on an as-available basis and the set of features
+included in your plan may change; features described as forthcoming are not part of the current
+Service. ROCloud provides **software only**.
 ROCloud does **not** sell, supply, bottle, or deliver water or any physical goods, and is not a
 party to any transaction between you and your own customers.
 

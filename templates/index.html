@@ -4,7 +4,9 @@
   <meta charset="utf-8">
   <title>ROCloud — delivery, billing & payments for RO water businesses</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="ROCloud is the all-in-one platform for RO water delivery businesses in India: customers, orders, delivery routes, bottle tracking, GST invoicing, online payments, AMC and reports.">
+  <!-- Keep this list to what v1 actually ships — it is the search-result snippet. AMC is
+       deferred (FEATURES.amcService = false); re-add it when the module goes live. -->
+  <meta name="description" content="ROCloud is the all-in-one platform for RO water delivery businesses in India: customers, orders, delivery routes, bottle tracking, GST invoicing, payments and reports.">
   <meta name="theme-color" content="#0C447C">
   <link rel="canonical" href="[SITE URL]/">
   <link rel="icon" type="image/svg+xml" href="/assets/logo.svg">
@@ -25,7 +27,11 @@
   <header class="header">
     <div class="wrap header-inner">
       <a class="logo" href="/"><!--LOGO--><span class="wordmark"><b>RO</b><i>Cloud</i></span></a>
-      <nav class="header-nav" aria-label="Main">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+        <svg class="icon-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <nav class="header-nav" id="site-nav" aria-label="Main">
         <a href="#features">Features</a>
         <a href="#pricing">Pricing</a>
         <a href="#faq">FAQ</a>
@@ -102,13 +108,13 @@
             <p>Generate monthly invoices as PDFs and collect by UPI, card or netbanking — or record cash on the doorstep. Dues are tracked for you.</p>
           </div>
 
-          <div class="feature">
-            <div class="feature-icon">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 5H8a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 1 1 4 0zM9 14l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
-            <h3>AMC &amp; service requests</h3>
-            <p>Service contracts raise their own visit tickets on schedule and land with the right technician. Nothing quietly lapses.</p>
-          </div>
+          <!--
+            An "AMC & service requests" card used to sit here. Removed: the module is not in v1
+            (rocloud-owner-portal FEATURES.amcService is false, which hides it from the sidebar,
+            command palette, route guard and the customer Service tab), so there is no route a
+            visitor could reach. Restore it — and re-add "AMC" to the <meta name="description">
+            above and to §1 of the Terms — when that flag ships as true.
+          -->
         </div>
       </div>
     </section>
@@ -124,11 +130,13 @@
 
         <!--
           Fallback for no-JS / API-unreachable visitors. site.js REPLACES this with the live plan
-          catalogue on load. The ₹999 floor is the only price written by hand anywhere on this site —
-          if the Basic plan's price ever changes in the plans table, update this line too.
+          catalogue on load. The floor price below is the only price written by hand anywhere on
+          this site, and it HAS drifted before (it read ₹999 while Basic was ₹1099) — `npm run
+          build` now checks it against GET /api/plans and warns on a mismatch, but that check is
+          skipped when the API is unreachable, so still update this line whenever Basic changes.
         -->
         <div data-plans class="plans-fallback">
-          <p class="amount">Plans from ₹999/month</p>
+          <p class="amount">Plans from ₹1,099/month</p>
           <p class="plans-note">Billed monthly. Cancel any time.</p>
           <p class="plans-fallback-cta"><a class="btn btn-primary btn-lg" href="[APP URL]/register">See plans &amp; start free trial</a></p>
         </div>

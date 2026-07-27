@@ -1,6 +1,6 @@
 # rocloud-site
 
-The public marketing site and legal pages for **ROCloud**, served at **https://rocloud.app**.
+The public marketing site and legal pages for **ROCloud**, served at **https://rocloud.in**.
 
 Plain static HTML/CSS/JS — no framework, no runtime dependencies. The only build-time dependency is
 `marked`, used to render the legal pages from Markdown.
@@ -8,8 +8,8 @@ Plain static HTML/CSS/JS — no framework, no runtime dependencies. The only bui
 ## Why this exists
 
 Razorpay (and any payment gateway) requires the merchant's policies to be reachable at **public
-URLs**, with no login. The portals can't serve that purpose: `app.rocloud.app` is behind a sign-in
-screen, and the tenant subdomains (`*.rocloud.app`) would duplicate the same legal text across every
+URLs**, with no login. The portals can't serve that purpose: `app.rocloud.in` is behind a sign-in
+screen, and the tenant subdomains (`*.rocloud.in`) would duplicate the same legal text across every
 customer's hostname. So the policies live here, once, on the apex domain.
 
 ## The legal pages are generated — don't edit them by hand
@@ -47,19 +47,36 @@ npm start            # build and serve at http://localhost:4300
 
 ## Pricing is fetched live — never hardcode it
 
-The pricing section renders from `GET https://api.rocloud.app/api/plans` (the `[AllowAnonymous]`
+The pricing section renders from `GET https://api.rocloud.in/api/plans` (the `[AllowAnonymous]`
 endpoint the sign-up wizard uses), so prices and limits here can never drift from the `plans` table.
 `assets/site.js` does this.
 
 The static cards in `templates/index.html` are the no-JS / API-down fallback. They contain the one
-hand-written price on the whole site — a **"from ₹999/month"** floor. If the Basic plan's price
+hand-written price on the whole site — a **"from ₹1,099/month"** floor. If the Basic plan's price
 changes, update that line.
+
+`build.mjs` now guards it: every build fetches the catalogue and compares the floor. A mismatch
+warns, and under `--strict` it refuses to publish. The check is skipped when the API is unreachable
+(so the site still builds offline and in CI), which is why the line above still needs updating by
+hand when a price moves.
+
+The annual price and its saving are **computed** from `yearlyPrice` in the same response — nothing
+about the discount is written by hand, and the line disappears entirely if a yearly price ever stops
+beating twelve monthly ones.
 
 ## Deploying
 
-1. `npm run build:prod` (fails if placeholders remain).
-2. Publish the contents of `dist/` to the IIS site for `rocloud.app`. `web.config` ships with it and
-   provides the extensionless `/legal/*` URLs, the `www` → apex redirect, and the security headers.
+1. `npm run build:prod` (fails if placeholders remain, or if the fallback price no longer matches
+   the live plan catalogue).
+2. Publish the contents of `dist/`.
+
+   > **The live site is on Netlify**, not IIS — `https://rocloud.in` 301s to `https://www.rocloud.in`
+   > and the response carries `Server: Netlify` and **no** security headers.
+   >
+   > `web.config` only applies to an IIS host. It is kept for that case, but note two things before
+   > relying on it: it redirects `www` → apex, which is the **opposite** of the live behaviour; and
+   > the security headers it defines (CSP included) are **not being served today**. There is no
+   > `netlify.toml` / `_headers` / `_redirects` in this repo, so nothing ports them across.
 3. Verify every URL returns **200 while signed out**, in a private window:
 
    ```
