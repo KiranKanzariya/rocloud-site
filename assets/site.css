@@ -294,11 +294,31 @@ section { padding-block: 88px; }
 .feature:nth-child(3n) .feature-icon { background: var(--amber-light); color: var(--amber); }
 
 /* ── Pricing ───────────────────────────────────────────────────────────────── */
+/*
+  The pricing row is wider than the 1120px page shell so that all FOUR tiers fit side by side.
+  At the standard width the content box is 1072px, but four cards plus their gaps need 1148px —
+  so the grid dropped to three columns and left Enterprise orphaned on a second row.
+
+  The column count also steps 4 → 2 → 1 rather than being left to auto-fit. auto-fit packs in
+  whatever fits, which lands on three across a wide band of laptop widths and reintroduces the
+  same orphan. Two-up is the honest fallback: an even split, no stranded card.
+*/
+#pricing .wrap { max-width: 1240px; }
+
 .plans {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(272px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   align-items: start;
+}
+
+/* Below the width that fits four, go straight to a 2×2 block — never three-plus-one. */
+@media (max-width: 1200px) {
+  .plans { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 620px) {
+  .plans { grid-template-columns: 1fr; }
 }
 
 .plan {
