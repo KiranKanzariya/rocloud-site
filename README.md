@@ -52,8 +52,9 @@ endpoint the sign-up wizard uses), so prices and limits here can never drift fro
 `assets/site.js` does this.
 
 The static cards in `templates/index.html` are the no-JS / API-down fallback. They contain the one
-hand-written price on the whole site — a **"from ₹1,099/month"** floor. If the Basic plan's price
-changes, update that line.
+hand-written price on the whole site — a **"from ₹499/month"** floor. It tracks the **cheapest
+active plan**, not a named tier: it followed Basic until the Starter plan was added below it. If
+that plan's price changes — or a cheaper tier is added — update that line.
 
 `build.mjs` now guards it: every build fetches the catalogue and compares the floor. A mismatch
 warns, and under `--strict` it refuses to publish. The check is skipped when the API is unreachable

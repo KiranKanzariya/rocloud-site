@@ -71,7 +71,7 @@
    * `plan: 'Pro'` on the /reports route in app.routes.ts. The proper fix is a flag on PlanDto so
    * this is data-driven like the rest; until then, keep these two in sync by hand.
    */
-  var PLAN_ORDER = { Basic: 1, Pro: 2, Enterprise: 3 };
+  var PLAN_ORDER = { Starter: 1, Basic: 2, Pro: 3, Enterprise: 4 };
   var TIER_FEATURES = [{ minTier: 'Pro', label: 'Reports, charts & CSV/Excel export' }];
 
   function atLeastTier(planType, minTier) {

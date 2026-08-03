@@ -131,12 +131,15 @@
         <!--
           Fallback for no-JS / API-unreachable visitors. site.js REPLACES this with the live plan
           catalogue on load. The floor price below is the only price written by hand anywhere on
-          this site, and it HAS drifted before (it read ₹999 while Basic was ₹1099) — `npm run
-          build` now checks it against GET /api/plans and warns on a mismatch, but that check is
-          skipped when the API is unreachable, so still update this line whenever Basic changes.
+          this site, and it HAS drifted before (it read ₹999 while the cheapest plan was ₹1099) —
+          `npm run build` now checks it against GET /api/plans and warns on a mismatch, but that
+          check is skipped when the API is unreachable, so still update this line by hand.
+
+          It tracks the CHEAPEST active plan, not a named tier: it followed Basic until Starter was
+          added below it at ₹499. Whenever a new entry tier lands, this line moves with it.
         -->
         <div data-plans class="plans-fallback">
-          <p class="amount">Plans from ₹1,099/month</p>
+          <p class="amount">Plans from ₹499/month</p>
           <p class="plans-note">Billed monthly. Cancel any time.</p>
           <p class="plans-fallback-cta"><a class="btn btn-primary btn-lg" href="[APP URL]/register">See plans &amp; start free trial</a></p>
         </div>

@@ -94,9 +94,13 @@ const findPlaceholders = (text) => [...new Set(text.match(/\[[A-Z][A-Z0-9 &_/-]{
 
 /**
  * The no-JS / API-down fallback in index.html states a "Plans from ₹N/month" floor by hand — the
- * only price written anywhere on this site. It silently drifted once (read ₹999 while the Basic
+ * only price written anywhere on this site. It silently drifted once (read ₹999 while the cheapest
  * plan was ₹1099), which is a price we do not offer being shown to anyone whose browser blocks
  * the script.
+ *
+ * The floor is the cheapest ACTIVE plan, whichever tier that is — it tracked Basic until Starter
+ * was added below it. Adding a new entry tier therefore moves this line too, and the check below
+ * is what stops that being forgotten.
  *
  * So: fetch the live catalogue and compare. A network failure is NOT an error (the site must build
  * offline and in CI without the API), but a reachable API that disagrees is — under --strict that
