@@ -56,8 +56,12 @@
   var appUrl = section.getAttribute('data-app');
   if (!grid || !apiUrl) return;
 
-  /** These exist in the plans table but aren't shipped yet — shown, honestly, as "Coming soon". */
-  var COMING_SOON = { whatsappEnabled: 'WhatsApp notifications', multiBranchEnabled: 'Multi-branch', apiAccessEnabled: 'API access' };
+  /*
+   * Unshipped features (whatsappEnabled, multiBranchEnabled, apiAccessEnabled) are NOT listed on
+   * the cards. They used to render as "Coming soon" rows whenever the flag was on, which sells a
+   * roadmap rather than the product — the owner portal's upgrade modal dropped the same rows.
+   * When one actually ships, list it as a normal feature line off its plan flag, like customRoles.
+   */
 
   /*
    * Tier ordering, mirroring PLAN_ORDER in rocloud-owner-portal permission.service.ts.
@@ -95,12 +99,8 @@
     return count.toLocaleString('en-IN') + ' ' + (count === 1 ? noun.replace(/s$/, '') : noun);
   }
 
-  function item(label, soon) {
-    return (
-      '<li' + (soon ? ' class="is-soon"' : '') + '>' + CHECK + '<span>' + escape(label) + '</span>' +
-      (soon ? '<span class="badge badge-soon">Coming soon</span>' : '') +
-      '</li>'
-    );
+  function item(label) {
+    return '<li>' + CHECK + '<span>' + escape(label) + '</span></li>';
   }
 
   /**
@@ -141,10 +141,6 @@
     });
 
     if (plan.customRolesEnabled) features.push(item('Custom roles & permissions'));
-
-    Object.keys(COMING_SOON).forEach(function (flag) {
-      if (plan[flag]) features.push(item(COMING_SOON[flag], true));
-    });
 
     return (
       '<div class="plan' + (popular ? ' is-popular' : '') + '">' +

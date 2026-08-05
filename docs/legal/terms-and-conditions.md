@@ -62,11 +62,11 @@ Section 12 and our data-retention practices.
 
 ## 5. Plans, subscriptions and renewals
 
-5.1 Paid features are provided under subscription **plans** (for example, Basic, Pro, and
+5.1 Paid features are provided under subscription **plans** (for example, Starter, Basic, Pro, and
 Enterprise), each with its own features, limits, and price shown on our pricing page or within the
 Service at the time of purchase.
 
-5.2 Subscriptions run for the billing period you select (for example, monthly). Access to
+5.2 Subscriptions run for the billing period you select (monthly or yearly). Access to
 plan features is granted for the period you have paid for.
 
 5.3 **Renewals are not automatic within the app.** Unless stated otherwise at checkout, your
