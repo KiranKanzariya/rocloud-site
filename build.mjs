@@ -44,7 +44,8 @@ const TOKENS = {
   '[SUPPORT EMAIL]': cfg.supportEmail,
   '[GRIEVANCE EMAIL]': cfg.grievanceEmail,
   '[SUPPORT PHONE]': cfg.supportPhone,
-  '[GRIEVANCE OFFICER NAME]': cfg.grievanceOfficer,
+  // No [GRIEVANCE OFFICER NAME]. The officer is published as a ROLE ("Grievance Officer, ROCloud")
+  // reachable at grievanceEmail, not as a named individual — see docs/legal/README.md.
   '[SITE URL]': cfg.siteUrl,
   '[APP URL]': cfg.appUrl,
   '[API URL]': cfg.apiUrl,
@@ -60,8 +61,13 @@ const TOKENS = {
  * Left empty → the whole sentence is removed, and the build does NOT fail.
  *
  * This is how a business that isn't GST-registered publishes Terms with no GST claim in them.
+ *
+ * Write the wrapped clause with NO space before its opening bracket, immediately after whatever
+ * punctuation precedes it — `**[LEGAL ENTITY NAME]**,[operated by …,]`. The unwrap below re-adds one
+ * leading space, so a source space would double up in the filled case, and the empty case would
+ * leave a gap before the comma.
  */
-const OPTIONAL = ['[GST NUMBER]'];
+const OPTIONAL = ['[GST NUMBER]', '[PROPRIETOR NAME]'];
 
 const substitute = (text) => {
   let out = text;

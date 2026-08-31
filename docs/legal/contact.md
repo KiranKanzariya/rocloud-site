@@ -1,4 +1,4 @@
-<!-- Replace: [LEGAL ENTITY NAME] [PROPRIETOR NAME] [BUSINESS ADDRESS] [SUPPORT EMAIL] [GRIEVANCE EMAIL] [SUPPORT PHONE] [GRIEVANCE OFFICER NAME]. Draft — verify all details before publishing. -->
+<!-- Replace: [LEGAL ENTITY NAME] [PROPRIETOR NAME] [BUSINESS ADDRESS] [SUPPORT EMAIL] [GRIEVANCE EMAIL] [SUPPORT PHONE]. Draft — verify all details before publishing. -->
 
 # Contact Us
 
@@ -12,7 +12,7 @@ We're here to help with anything related to your ROCloud account, billing, or th
 ## Business details
 
 **[LEGAL ENTITY NAME]**
-Operated by: **[PROPRIETOR NAME]**
+[Operated by: **[PROPRIETOR NAME]**]
 Registered / place of business: **[BUSINESS ADDRESS]**
 _(<City>, Gujarat, India)_
 
@@ -36,7 +36,7 @@ holidays).
 For complaints or concerns about how your personal data is handled, you may contact our Grievance
 Officer under the Digital Personal Data Protection Act, 2023:
 
-**[GRIEVANCE OFFICER NAME]**
+**Grievance Officer, [LEGAL ENTITY NAME]**
 Email: **[GRIEVANCE EMAIL]**
 Address: **[BUSINESS ADDRESS]**
 

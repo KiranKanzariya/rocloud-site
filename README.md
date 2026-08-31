@@ -36,6 +36,12 @@ substitutes them into every page.
 Any token left empty stays visible in the output, and `npm run build:prod` **exits 1 rather than
 publish it**. A Razorpay reviewer must never see `[BUSINESS ADDRESS]`.
 
+Two fields are exempt because they are genuinely optional — `gstNumber` and `proprietorName`. Their
+clauses are wrapped in outer brackets in the Markdown, so an empty value deletes the clause instead
+of failing the build (`OPTIONAL` in `build.mjs`). `proprietorName` is empty on purpose: the pages
+name the business, not a person. See the note in `site.config.mjs` for what that costs while the
+business is an unregistered proprietorship.
+
 ## Commands
 
 ```bash

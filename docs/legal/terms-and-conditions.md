@@ -6,7 +6,7 @@
 **Last updated:** 7 July 2026
 
 These Terms & Conditions ("**Terms**") are a legal agreement between you and
-**[LEGAL ENTITY NAME]**, operated by **[PROPRIETOR NAME]**, having its place of business at
+**[LEGAL ENTITY NAME]**,[operated by **[PROPRIETOR NAME]**,] having its place of business at
 **[BUSINESS ADDRESS]** ("**ROCloud**", "**we**", "**us**", or "**our**"), governing your access
 to and use of the ROCloud platform, websites, applications, and related services available at
 **https://rocloud.in** and its subdomains (collectively, the "**Service**").

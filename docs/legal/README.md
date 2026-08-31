@@ -4,14 +4,23 @@
   Search each file for square-bracket tokens and fill them in:
 
     [LEGAL ENTITY NAME]   e.g. "Acme Softworks (Sole Proprietorship)" once you register.
-    [PROPRIETOR NAME]     the individual who owns/operates the business (for now).
+    [PROPRIETOR NAME]     OPTIONAL, and currently empty on purpose — the pages name the
+                          business, not a person. Its clause is wrapped in outer brackets
+                          so an empty value removes it. See site.config.mjs for the caveat:
+                          until an entity is registered, this leaves the Terms with a
+                          counterparty that has no legal existence of its own.
     [BUSINESS ADDRESS]    full postal address, ending in "<City>, Gujarat, India, <PIN>".
     [COURT CITY]          the Gujarat city whose courts have jurisdiction (e.g. Ahmedabad, Rajkot, Surat).
     [SUPPORT EMAIL]       suggested: support@rocloud.in  (create the mailbox first).
     [GRIEVANCE EMAIL]     suggested: grievance@rocloud.in or reuse support.
     [SUPPORT PHONE]       a reachable +91 number.
     [GST NUMBER]          only if/when GST-registered; otherwise delete GST lines.
-    [GRIEVANCE OFFICER NAME]  a named person (DPDP Act 2023 expects one).
+
+  The Grievance Officer is published by ROLE, not by name — "Grievance Officer,
+  <LEGAL ENTITY NAME>" at [GRIEVANCE EMAIL], in privacy-policy.md §10 and contact.md.
+  Keep that mailbox monitored: it is the only channel a data principal has. If a lawyer
+  asks for a named individual (SPDI Rule 5(9) reads that way; DPDP s.13(3) does not),
+  name them in those two files and add the token back to build.mjs.
 
   These are drafts, not legal advice. Have a qualified Indian lawyer review them
   before you publish, especially the Terms, Privacy Policy, and Refund Policy.

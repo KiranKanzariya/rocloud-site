@@ -1,11 +1,11 @@
-<!-- Replace: [LEGAL ENTITY NAME] [PROPRIETOR NAME] [BUSINESS ADDRESS] [SUPPORT EMAIL] [GRIEVANCE EMAIL] [SUPPORT PHONE] [GRIEVANCE OFFICER NAME] [COURT CITY]. Draft — have a lawyer review before publishing. -->
+<!-- Replace: [LEGAL ENTITY NAME] [PROPRIETOR NAME] [BUSINESS ADDRESS] [SUPPORT EMAIL] [GRIEVANCE EMAIL] [SUPPORT PHONE] [COURT CITY]. Draft — have a lawyer review before publishing. -->
 
 # Privacy Policy
 
 **Effective date:** 7 July 2026
 **Last updated:** 7 July 2026
 
-This Privacy Policy explains how **[LEGAL ENTITY NAME]**, operated by **[PROPRIETOR NAME]**
+This Privacy Policy explains how **[LEGAL ENTITY NAME]** [(operated by **[PROPRIETOR NAME]**)]
 ("**ROCloud**", "**we**", "**us**", "**our**"), collects, uses, shares, and protects personal data
 in connection with the ROCloud platform available at **https://rocloud.in** and its subdomains
 (the "**Service**"). It is intended to comply with the **Digital Personal Data Protection Act,
@@ -134,7 +134,7 @@ controls that data.
 In accordance with applicable Indian law, you may contact our Grievance Officer for any complaint or
 concern about the handling of your personal data:
 
-**Grievance Officer:** [GRIEVANCE OFFICER NAME]
+**Grievance Officer, [LEGAL ENTITY NAME]**
 Email: **[GRIEVANCE EMAIL]**
 Address: **[BUSINESS ADDRESS]**
 
